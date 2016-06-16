@@ -83,6 +83,7 @@ module OAuth2
                     :client_secret  => @client.secret,
                     :grant_type     => 'refresh_token',
                     :refresh_token  => refresh_token)
+                    :headers        => headers_refresh)
       new_token = @client.get_token(params)
       new_token.options = options
       new_token.refresh_token = refresh_token unless new_token.refresh_token
@@ -145,6 +146,23 @@ module OAuth2
     # Get the headers hash (includes Authorization token)
     def headers
       {'Authorization' => options[:header_format] % token}
+    end
+
+    def headers_refresh
+      case @client.options[:auth_scheme]
+      when :basic_auth
+        {'Authorization' => authorization(@client.id, @client.secret)}
+      else
+        {'Authorization' => options[:header_format] % token}
+      end
+    end
+
+    # Returns the Authorization header value for Basic Authentication
+    #
+    # @param [String] The client ID
+    # @param [String] the client secret
+    def authorization(client_id, client_secret)
+      'Basic ' + Base64.encode64(client_id + ':' + client_secret).gsub("\n", '')
     end
 
   private
