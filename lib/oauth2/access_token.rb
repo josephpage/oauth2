@@ -82,7 +82,7 @@ module OAuth2
       params.merge!(:client_id      => @client.id,
                     :client_secret  => @client.secret,
                     :grant_type     => 'refresh_token',
-                    :refresh_token  => refresh_token)
+                    :refresh_token  => refresh_token,
                     :headers        => headers_refresh)
       new_token = @client.get_token(params)
       new_token.options = options
